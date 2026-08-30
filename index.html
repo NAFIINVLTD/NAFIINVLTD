@@ -118,7 +118,7 @@
             let currentPrice = cowPrices[i - 1];
             cowsContainer.innerHTML += `
                 <div class="card" onclick="selectLivestock('Cow Variant ${i}', ${currentPrice}, this)">
-                    <img src="cow${i}.jpeg" alt="Cow ${i}" onerror="this.src='https://placehold.co{i}'">
+                    <img src="cow${i}.jpg" alt="Cow ${i}" onerror="this.src='https://placehold.co{i}'">
                     <div class="card-info">
                         <div class="card-title">Healthy Cow Variant #${i}</div>
                         <div class="card-price">₦${currentPrice.toLocaleString()}</div>
@@ -132,7 +132,7 @@
             let currentPrice = chickenPrices[i - 1];
             chickensContainer.innerHTML += `
                 <div class="card" onclick="selectLivestock('Chicken Variant ${i}', ${currentPrice}, this)">
-                    <img src="chicken${i}.jpeg" alt="Chicken ${i}" onerror="this.src='https://placehold.co{i}'">
+                    <img src="chicken${i}.jpg" alt="Chicken ${i}" onerror="this.src='https://placehold.co{i}'">
                     <div class="card-info">
                         <div class="card-title">Premium Chicken Variant #${i}</div>
                         <div class="card-price">₦${currentPrice.toLocaleString()}</div>
