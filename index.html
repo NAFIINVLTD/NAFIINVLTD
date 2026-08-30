@@ -10,7 +10,7 @@
         
         /* Blue background with your logo.png fixed as a faint background watermark */
         body { 
-            background-color: #1e3a8a; /* Deep blue background */
+            background-color: #1e3a8a; /* Deep blue background theme */
             color: #1e293b; 
             margin: 0; 
             padding: 20px; 
@@ -18,38 +18,40 @@
             min-height: 100vh;
         }
         
-        /* Faint Logo Watermark Layer reading logo.png */
-        body::before {
-            content: "";
+        /* Fixed Background Floating Watermark */
+        .watermark-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60vw;
+            height: 60vw;
+            max-width: 500px;
+            max-height: 500px;
             background-image: url('logo.png'); /* Reads your uploaded logo.png */
             background-position: center;
             background-repeat: no-repeat;
-            background-size: 50vw; /* Scales elegantly across the screen */
-            opacity: 0.15; /* Increased slightly so it is fair but visible */
-            z-index: 1; /* Placed ABOVE the body background color */
+            background-size: contain;
+            opacity: 0.12; /* Keeps watermark faint and readable */
+            z-index: 1; 
             pointer-events: none;
         }
 
-        /* Container is made slightly see-through so the watermark shows behind the text */
+        /* Container is see-through/semi-transparent so the background watermark floats clearly through the middle */
         .container { 
             position: relative;
-            z-index: 2; /* Ensures forms stay on top and clickable */
+            z-index: 2; /* Keeps forms clickable on top layers */
             max-width: 950px; 
-            background: rgba(255, 255, 255, 0.92); /* See-through white background */
+            background: rgba(255, 255, 255, 0.91); /* See-through blend style */
             margin: 0 auto; 
             padding: 30px; 
             border-radius: 12px; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
         }
         
-        /* Header / Logo Style */
+        /* Header Logo Style */
         .header { text-align: center; margin-bottom: 30px; }
-        .logo { max-width: 120px; height: auto; border-radius: 50%; margin-bottom: 10px; border: 3px solid #1e3a8a; }
+        .logo { max-width: 120px; height: auto; border-radius: 50%; margin-bottom: 10px; border: 3px solid #1e3a8a; background: white; }
         .header h1 { margin: 5px 0; color: #0f172a; font-size: 2rem; font-weight: bold; }
         .header p { color: #475569; font-size: 1rem; }
 
@@ -63,7 +65,7 @@
         /* Grid Layout for Livestock Selection */
         .category-title { font-size: 1.4rem; font-weight: bold; margin: 35px 0 15px 0; padding-bottom: 8px; border-bottom: 3px solid #1e3a8a; color: #1e3a8a; }
         
-        /* Strictly forced Grid View for items */
+        /* Grid display matching your layout request */
         .livestock-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
@@ -74,7 +76,7 @@
         /* Selectable Cards */
         .card { border: 2px solid #e2e8f0; border-radius: 10px; overflow: hidden; background: #fff; cursor: pointer; transition: all 0.2s ease; position: relative; }
         .card:hover { transform: translateY(-4px); box-shadow: 0 6px 15px rgba(0,0,0,0.1); border-color: #1e3a8a; }
-        .card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+        .card img { width: 100%; height: 200px; object-fit: cover; display: block; background-color: #f1f5f9; }
         .card-info { padding: 15px; text-align: center; background: #fff; }
         .card-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; color: #334155; }
         .card-price { font-weight: bold; color: #16a34a; font-size: 1.2rem; }
@@ -84,21 +86,24 @@
         .card.selected::after { content: '✓ Chosen'; position: absolute; top: 12px; right: 12px; background: #16a34a; color: white; padding: 5px 10px; font-size: 0.8rem; font-weight: bold; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
         /* Bottom Sticky Action Panel */
-        .checkout-box { position: sticky; bottom: 0; background: rgba(255, 255, 255, 0.98); padding: 20px; border-top: 2px solid #cbd5e1; margin-top: 40px; text-align: center; border-radius: 0 0 12px 12px; box-shadow: 0 -4px 10px rgba(0,0,0,0.05); }
+        .checkout-box { position: sticky; bottom: 0; background: rgba(255, 255, 255, 0.98); padding: 20px; border-top: 2px solid #cbd5e1; margin-top: 40px; text-align: center; border-radius: 0 0 12px 12px; box-shadow: 0 -4px 10px rgba(0,0,0,0.05); z-index: 10; }
         .summary-text { font-size: 1.2rem; margin-bottom: 15px; font-weight: bold; color: #0f172a; }
         
-        /* Forced Solid Black Submit Button */
+        /* Black submit button */
         .pay-btn { background-color: #000000; color: #ffffff; border: none; width: 100%; max-width: 450px; padding: 16px; font-size: 1.25rem; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
         .pay-btn:hover { background-color: #222222; }
     </style>
 </head>
 <body>
 
+<!-- Separate background watermark layout container -->
+<div class="watermark-bg"></div>
+
 <div class="container">
     <div class="header">
-        <!-- Main Logo atop the page -->
-        <img src="logo.png" alt="Farm Logo" class="logo" onerror="this.style.display='none'">
-        <h1>NAFIINVLTD  Livestock Market</h1>
+        <!-- Main Logo atop the page using logo.png -->
+        <img src="logo.png" alt="Farm Logo" class="logo" id="mainLogo">
+        <h1>NAFIINVLTD Farm Livestock Market</h1>
         <p>Pick your preferred livestock choice from the grid options below and secure your purchase instantly.</p>
     </div>
 
@@ -127,7 +132,7 @@
             
             <div class="form-row">
                 <div>
-                    <label for="address1">Address Line 1 (Street name / House Number)</label>
+                    <label for="address1">Address Line 1 (Street Name / House Number)</label>
                     <input type="text" id="address1" required placeholder="e.g. 12 Broad Street">
                 </div>
                 <div>
@@ -154,15 +159,11 @@
 
         <!-- COWS GRID VIEW -->
         <div class="category-title">🐄 Available Healthy Cows</div>
-        <div id="cowsGridContainer" class="livestock-grid">
-            <!-- JavaScript dynamically loops through cow1.jpg to cow6.jpg right here -->
-        </div>
+        <div id="cowsGridContainer" class="livestock-grid"></div>
 
         <!-- CHICKENS GRID VIEW -->
-        <div class="category-title"> Rooster & Broiler Chickens</div>
-        <div id="chickensGridContainer" class="livestock-grid">
-            <!-- JavaScript dynamically loops through chicken1.jpg to chicken6.jpg right here -->
-        </div>
+        <div class="category-title">🐓 Rooster & Broiler Chickens</div>
+        <div id="chickensGridContainer" class="livestock-grid"></div>
 
         <!-- BOTTOM ACTION PANEL -->
         <div class="checkout-box">
@@ -172,25 +173,62 @@
     </form>
 </div>
 
-<!-- Paystack Inline Frame Engine -->
-<script src="https://paystack.co"></script>
+<!-- Paystack Inline Frame Engine (Using official updated CDN) -->
+<script src="https://js.paystack.co/v2/inline.js"></script>
 
 <script>
-    // Loop through the 6 Chicken files (chicken1.jpg ... chicken6.jpg)
-    for (let i = 1; i <= 6; i++) {
-        let currentPrice = chickenPrices[i - 1];
-        chickensContainer.innerHTML += `
-            <div class="card" onclick="selectLivestock('Chicken Variant ${i}', ${currentPrice}, this)"> 
-                <img src="./chicken${i}.jpg" alt="Chicken ${i}" onerror="this.src='https://placehold.co{i}'"> 
-                <div class="card-info"> 
-                    <div class="card-title">Premium Chicken Variant #${i}</div> 
-                    <div class="card-price">₦${currentPrice.toLocaleString()}</div> 
-                </div> 
-            </div>
-        `;
+    // Exact requested tiered price structures (Ranges: Cows 500k-800k, Chickens 8k-10k)
+    const cowPrices =;
+    const chickenPrices =;
+
+    let selectedItemDetails = null;
+
+    // Automatic fallback bypass system to loop extensions if images fail
+    function handleImageError(imgElement, type, index, attempt = 1) {
+        const fallbacks = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG', '.JPEG'];
+        if (attempt < fallbacks.length) {
+            imgElement.src = `./${type}${index}${fallbacks[attempt]}`;
+            imgElement.onerror = function() { handleImageError(imgElement, type, index, attempt + 1); };
+        } else {
+            imgElement.src = `https://placehold.co{type}+Variant+${index}`;
+        }
     }
 
-    // Process interface selection feedback
+    // Build the grid views layout dynamically
+    function generateMarketplaceCards() {
+        const cowsContainer = document.getElementById('cowsGridContainer');
+        const chickensContainer = document.getElementById('chickensGridContainer');
+
+        // Loop through the 6 Cow files
+        for (let i = 1; i <= 6; i++) {
+            let currentPrice = cowPrices[i - 1];
+            cowsContainer.innerHTML += `
+                <div class="card" onclick="selectLivestock('Cow Variant ${i}', ${currentPrice}, this)">
+                    <img src="./cow${i}.jpg" alt="Cow ${i}" onerror="handleImageError(this, 'cow', ${i})">
+                    <div class="card-info">
+                        <div class="card-title">Healthy Cow Variant #${i}</div>
+                        <div class="card-price">₦${currentPrice.toLocaleString()}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Loop through the 6 Chicken files
+        for (let i = 1; i <= 6; i++) {
+            let currentPrice = chickenPrices[i - 1];
+            chickensContainer.innerHTML += `
+                <div class="card" onclick="selectLivestock('Chicken Variant ${i}', ${currentPrice}, this)">  
+                    <img src="./chicken${i}.jpg" alt="Chicken ${i}" onerror="handleImageError(this, 'chicken', ${i})">  
+                    <div class="card-info">  
+                        <div class="card-title">Premium Chicken Variant #${i}</div>  
+                        <div class="card-price">₦${currentPrice.toLocaleString()}</div>  
+                    </div>  
+                </div>
+            `;
+        }
+    }
+
+    // Handles layout card selection state feedback
     function selectLivestock(itemName, price, element) {
         document.querySelectorAll('.card').forEach(card => card.classList.remove('selected'));
         element.classList.add('selected');
@@ -212,9 +250,9 @@
         const name = document.getElementById('fullName').value;
         const phone = document.getElementById('phone').value;
 
-        // Combine address input fields cleanly to attach as payment metadata
         const fullStructuredAddress = `Addr1: ${document.getElementById('address1').value}, Addr2: ${document.getElementById('address2').value || 'N/A'}, City: ${document.getElementById('city').value}, State: ${document.getElementById('state').value}, Landmark: ${document.getElementById('landmark').value}`.trim();
 
+        // Using standard PaystackPop framework
         let handler = PaystackPop.setup({
             key: 'YOUR_PAYSTACK_PUBLIC_KEY', // REPLACE STRING WITH YOUR LIVE PUBLIC KEY FROM PAYSTACK SETTINGS
             email: email,
@@ -230,8 +268,6 @@
             },
             callback: function(response) {
                 alert('Payment Confirmed! Reference Number: ' + response.reference);
-                
-                // Clear state options upon checkout completion
                 document.getElementById('marketForm').reset();
                 document.getElementById('orderSummary').innerText = "No Item Selected";
                 document.querySelectorAll('.card').forEach(card => card.classList.remove('selected'));
@@ -247,4 +283,16 @@
 
     // Fire grid initialization layout
     generateMarketplaceCards();
+
+    // Automatic fallback loop loader for top header logo
+    const mainLogoImg = document.getElementById('mainLogo');
+    if (mainLogoImg) {
+        mainLogoImg.onerror = function() {
+            const logoExtensions = ['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG'];
+            let currentIdx = logoExtensions.indexOf('.' + mainLogoImg.src.split('.').pop());
+            if(currentIdx < logoExtensions.length - 1 && currentIdx !== -1) {
+                mainLogoImg.src = './logo' + logoExtensions[currentIdx + 1];
+            }
+        };
+    }
 </script>
