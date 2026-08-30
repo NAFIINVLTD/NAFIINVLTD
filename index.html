@@ -8,7 +8,7 @@
         /* Base styles using Arial */
         * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
         
-        /* Blue background with your logo.png fixed as a faint background watermark */
+        /* Blue background with your logo fixed as a faint background watermark */
         body { 
             background-color: #1e3a8a; /* Deep blue background theme */
             color: #1e293b; 
@@ -172,57 +172,24 @@
     </form>
 </div>
 
-
-!-- Place this right after your closing </form> and </div> tags -->
-
-<!-- Loads the official Paystack engine -->
-<script src="https://paystack.co"></script>
-
+<!-- Paste this code block into the bottom section of your index.html file -->
 <script>
-    // Automated absolute URL path calculator
-    const pathNameClean = window.location.pathname.replace(/index\.html$/, '');
-    const absoluteURL = window.location.origin + (pathNameClean.endsWith('/') ? pathNameClean : pathNameClean + '/');
-
-    // Set logos dynamically using absolute base path
-    document.getElementById('mainLogo').src = absoluteURL + 'logo.png';
-    const watermark = document.getElementById('watermarkLayer');
-    if (watermark) {
-        watermark.style.backgroundImage = "url('" + absoluteURL + "logo.png" + "')";
-    }
-
-    // Tiered price structures (Cows 500k-800k, Chickens 8k-10k)
-    const cowPrices =;
-    const chickenPrices =;
-
-    let selectedItemDetails = null;
-
-    // Automatic fallback loop system to catch wrong image extensions
-    function handleImageError(imgElement, type, index, attempt = 0) {
-        const fallbacks = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG', '.JPEG', '.jfif'];
-        if (attempt < fallbacks.length) {
-            imgElement.src = absoluteURL + type + index + fallbacks[attempt];
-            imgElement.onerror = function() { handleImageError(imgElement, type, index, attempt + 1); };
-        } else {
-            imgElement.src = `https://placehold.co{type}+Variant+${index}`;
-        }
-    }
-
-    // Build the grid views layout dynamically
+    // Build the grid layouts using link mapping parameters
     function generateMarketplaceCards() {
         const cowsContainer = document.getElementById('cowsGridContainer');
         const chickensContainer = document.getElementById('chickensGridContainer');
-        
+
         if (!cowsContainer || !chickensContainer) return;
-        
+
         cowsContainer.innerHTML = '';
         chickensContainer.innerHTML = '';
 
-        // Loop through the 6 Cow files
+        // Loop and duplicate cow image into 6 grid placeholders
         for (let i = 1; i <= 6; i++) {
             let currentPrice = cowPrices[i - 1];
             cowsContainer.innerHTML += `
                 <div class="card" onclick="selectLivestock('Cow Variant ${i}', ${currentPrice}, this)">
-                    <img src="${absoluteURL}cow${i}.jpg" alt="Cow ${i}" onerror="handleImageError(this, 'cow', ${i}, 1)">
+                    <img src="${testCow}" alt="Cow ${i}">
                     <div class="card-info">
                         <div class="card-title">Healthy Cow Variant #${i}</div>
                         <div class="card-price">₦${currentPrice.toLocaleString()}</div>
@@ -231,16 +198,16 @@
             `;
         }
 
-        // Loop through the 6 Chicken files
+        // Loop and duplicate chicken image into 6 grid placeholders
         for (let i = 1; i <= 6; i++) {
             let currentPrice = chickenPrices[i - 1];
             chickensContainer.innerHTML += `
-                <div class="card" onclick="selectLivestock('Chicken Variant ${i}', ${currentPrice}, this)">
-                    <img src="${absoluteURL}chicken${i}.jpg" alt="Chicken ${i}" onerror="handleImageError(this, 'chicken', ${i}, 1)">
-                    <div class="card-info">
-                        <div class="card-title">Premium Chicken Variant #${i}</div>
-                        <div class="card-price">₦${currentPrice.toLocaleString()}</div>
-                    </div>
+                <div class="card" onclick="selectLivestock('Chicken Variant ${i}', ${currentPrice}, this)"> 
+                    <img src="${testChicken}" alt="Chicken ${i}"> 
+                    <div class="card-info"> 
+                        <div class="card-title">Premium Chicken Variant #${i}</div> 
+                        <div class="card-price">₦${currentPrice.toLocaleString()}</div> 
+                    </div> 
                 </div>
             `;
         }
@@ -270,11 +237,11 @@
 
         const fullStructuredAddress = `Addr1: ${document.getElementById('address1').value}, Addr2: ${document.getElementById('address2').value || 'N/A'}, City: ${document.getElementById('city').value}, State: ${document.getElementById('state').value}, Landmark: ${document.getElementById('landmark').value}`.trim();
 
-        // TEMPORARY FAKE TESTING KEY TO BYPASS THE CRASH
+        // Testing sandbox keys format to bypass API execution freezes
         let handler = PaystackPop.setup({
             key: 'pk_test_1234567890abcdef1234567890abcdef12345678', 
             email: email,
-            amount: selectedItemDetails.price * 100, 
+            amount: selectedItemDetails.price * 100, // Converts Naira to Kobo
             currency: 'NGN',
             metadata: {
                 custom_fields: [
