@@ -161,7 +161,7 @@
         <div id="cowsGridContainer" class="livestock-grid"></div>
 
         <!-- CHICKENS GRID VIEW -->
-        <div class="category-title"> Rooster & Broiler Chickens</div>
+        <div class="category-title">🐓 Rooster & Broiler Chickens</div>
         <div id="chickensGridContainer" class="livestock-grid"></div>
 
         <!-- BOTTOM ACTION PANEL -->
@@ -172,11 +172,40 @@
     </form>
 </div>
 
-<!-- Paystack Inline Frame Engine -->
+
+!-- Place this right after your closing </form> and </div> tags -->
+
+<!-- 1. First, we load the official Paystack engine -->
 <script src="https://paystack.co"></script>
 
+<!-- 2. Next, we open the script block for your custom logic -->
 <script>
-    // Build the grid views layout dynamically
+    // Bulletproof URL calculation setup
+    const pathNameClean = window.location.pathname.replace(/index\.html$/, '');
+    const absoluteURL = window.location.origin + (pathNameClean.endsWith('/') ? pathNameClean : pathNameClean + '/');
+
+    // Set logos dynamically using absolute base path
+    document.getElementById('mainLogo').src = absoluteURL + 'logo.png';
+    document.getElementById('watermarkLayer').style.backgroundImage = "url('" + absoluteURL + "logo.png" + "')";
+
+    // Tiered price structures (Cows 500k-800k, Chickens 8k-10k)
+    const cowPrices =;
+    const chickenPrices =;
+
+    let selectedItemDetails = null;
+
+    // Automatic fallback bypass loop system to catch wrong image extensions
+    function handleImageError(imgElement, type, index, attempt = 0) {
+        const fallbacks = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG', '.JPEG', '.jfif'];
+        if (attempt < fallbacks.length) {
+            imgElement.src = absoluteURL + type + index + fallbacks[attempt];
+            imgElement.onerror = function() { handleImageError(imgElement, type, index, attempt + 1); };
+        } else {
+            imgElement.src = `https://placehold.co{type}+Variant+${index}`;
+        }
+    }
+
+    // YOUR PASTED FUNCTION STARTS HERE
     function generateMarketplaceCards() {
         const cowsContainer = document.getElementById('cowsGridContainer');
         const chickensContainer = document.getElementById('chickensGridContainer');
@@ -267,4 +296,4 @@
 
     // Fire grid initialization layout
     generateMarketplaceCards();
-</script>
+</script> <!-- 3. Close the script tag at the very end -->
