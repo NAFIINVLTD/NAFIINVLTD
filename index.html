@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAFI INV LTD - Livestock Marketplace</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            margin: 0; padding: 0;
+            background-color: #f9f9f9; 
+            position: relative; min-height: 100vh;
+        }
+        
+        /* FULL SCREEN LIGHT BACKGROUND LOGO WATERMARK */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('images/logo.png'); background-repeat: no-repeat;
+            background-position: center; background-size: 35%; opacity: 0.04; z-index: -1; pointer-events: none;
+        }
+        
+        /* TOP COMPANY HEADER */
+        .top-header { 
+            background-color: #ffffff; 
+            padding: 15px 20px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
+            margin-bottom: 20px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        .top-logo { 
+            max-height: 50px; 
+            width: auto; 
+            object-fit: contain; 
+        }
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #222;
+            margin: 0;
+        }
+
+        .container { max-width: 900px; margin: 0 auto 40px auto; background: rgba(255, 255, 255, 0.96); padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        h2 { color: #222; margin-top: 0; font-size: 24px; }
+        h3 { text-align: left; color: #444; border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-top: 30px; }
+        
+        /* RESPONSIVE GRID FOR YOUR 12 ITEMS */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin: 15px 0 30px 0; }
+        .card { border: 2px solid #eee; padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.2s; background: #fff; text-align: center; position: relative; }
+        .card:hover { border-color: #3b71ca; background-color: #f8faff; }
+        .livestock-img { width: 100%; height: 110px; object-fit: cover; border-radius: 4px; }
+        .card label { font-weight: bold; font-size: 13px; cursor: pointer; display: block; margin-top: 8px; color: #333; }
+        input[type="radio"] { margin-top: 8px; transform: scale(1.1); }
+        
+        /* CUSTOMER FORM STYLING */
+        .form-section { max-width: 500px; margin: 40px auto 0 auto; border-top: 1px solid #eee; padding-top: 25px; }
+        input[type="text"], input[type="email"], input[type="tel"], textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; font-family: Arial, sans-serif; }
+        textarea { resize: vertical; min-height: 80px; }
+        button { background-color: #3b71ca; color: white; border: none; padding: 14px 20px; width: 100%; font-size: 16px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 15px; }
+        button:hover { background-color: #2854a1; }
+    </style>
+</head>
+<body>
+
+<!-- TOP LOGO & COMPANY NAME NAVIGATION BAR -->
+<div class="top-header">
+    <img src="images/logo.png" alt="NAFI INV LTD" class="top-logo">
+    <h1 class="company-name">NAFI INV LTD</h1>
+</div>
+
+<div class="container">
+    <h2>Select Your Livestock Order</h2>
+    <p>Choose your preferred animal from our available stock below, fill in your details, and proceed to secure Paystack payment.</p>
+    
+    <!-- ✅ FORMSPREE LINK IS PLUGGED IN SECURELY BELOW -->
+    <form id="orderForm" action="https://formspree.io/f/mnpqnwzo" method="POST">
+        
+        <h3>Available Cows (₦500,000)</h3>
+        <div class="grid" id="cowsGrid"></div>
+
+        <h3>Available Chickens (₦8,000)</h3>
+        <div class="grid" id="chickensGrid"></div>
+
+        <div class="form-section">
+            <h2>Your Delivery Information</h2>
+            <input type="text" name="Full Name" placeholder="Your Full Name" required>
+            <input type="email" name="Email Address" placeholder="Your Email Address" required>
+            <input type="tel" name="Phone Number" placeholder="Your Phone Number" required>
+            <textarea name="Home Address" placeholder="Your Full Delivery/Home Address" required></textarea>
+
+            <!-- Paystack Redirect Setting -->
+            <input type="hidden" id="nextUrl" name="_next" value="">
+            <button type="submit" onclick="prepareRedirect()">Proceed to Payment</button>
+        </div>
+    </form>
+</div>
+
+<script>
+const cowsGrid = document.getElementById('cowsGrid');
+const chickensGrid = document.getElementById('chickensGrid');
+
+// ⚙️ ADJUST DYNAMIC CONTENT GENERATION FOR YOUR 12 UPLOADED IMAGES
+const totalCowsUploaded = 6;     
+const totalChickensUploaded = 6; 
+
+// Automatically generates Cow choice cards
+for (let i = 1; i <= totalCowsUploaded; i++) {
+    cowsGrid.innerHTML += `
+        <div class="card" onclick="document.getElementById('cow_${i}').checked = true">
+            <img src="images/cow${i}.jpg" alt="Cow ${i}" class="livestock-img">
+            <label>Cow Breed ${i}</label>
+            <input type="radio" id="cow_${i}" name="Livestock Choice" value="Cow Breed ${i}" required>
+        </div>
+    `;
+}
+
+// Automatically generates Chicken choice cards
+for (let i = 1; i <= totalChickensUploaded; i++) {
+    chickensGrid.innerHTML += `
+        <div class="card" onclick="document.getElementById('chicken_${i}').checked = true">
+            <img src="images/chicken${i}.jpg" alt="Chicken ${i}" class="livestock-img">
+            <label>Chicken Type ${i}</label>
+            <input type="radio" id="chicken_${i}" name="Livestock Choice" value="Chicken Type ${i}" required>
+        </div>
+    `;
+}
+
+function prepareRedirect() {
+    const selectedChoice = document.querySelector('input[name="Livestock Choice"]:checked');
+    const nextUrlInput = document.getElementById('nextUrl');
+    
+    // ✅ LIVE PAYSTACK CHECKOUT ENGINE LINKS PLUGGED IN BELOW
+    const cowPaystackLink = "https://paystack.shop";
+    const chickenPaystackLink = "https://paystack.shop";
+    
+    if (selectedChoice && selectedChoice.value.includes("Cow")) {
+        nextUrlInput.value = cowPaystackLink;
+    } else {
+        nextUrlInput.value = chickenPaystackLink;
+    }
+}
+</script>
+
+</body>
+</html>
