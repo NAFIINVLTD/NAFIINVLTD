@@ -8,7 +8,7 @@
         /* Base styles using Arial */
         * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
         
-        /* Blue background with your logo fixed as a faint background watermark */
+        /* Blue background with your logo.png fixed as a faint background watermark */
         body { 
             background-color: #1e3a8a; /* Deep blue background */
             color: #1e293b; 
@@ -18,7 +18,7 @@
             min-height: 100vh;
         }
         
-        /* Faint Logo Watermark Layer */
+        /* Faint Logo Watermark Layer reading logo.png */
         body::before {
             content: "";
             position: fixed;
@@ -26,16 +26,26 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('logo.jpg'); /* Reads your uploaded logo.jpg */
+            background-image: url('logo.png'); /* Reads your uploaded logo.png */
             background-position: center;
             background-repeat: no-repeat;
-            background-size: 40%; /* Controls watermark size */
-            opacity: 0.08; /* Makes the logo faint/fair in the background */
-            z-index: -1;
+            background-size: 50vw; /* Scales elegantly across the screen */
+            opacity: 0.15; /* Increased slightly so it is fair but visible */
+            z-index: 1; /* Placed ABOVE the body background color */
             pointer-events: none;
         }
 
-        .container { max-width: 950px; background: rgba(255, 255, 255, 0.96); margin: 0 auto; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        /* Container is made slightly see-through so the watermark shows behind the text */
+        .container { 
+            position: relative;
+            z-index: 2; /* Ensures forms stay on top and clickable */
+            max-width: 950px; 
+            background: rgba(255, 255, 255, 0.92); /* See-through white background */
+            margin: 0 auto; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); 
+        }
         
         /* Header / Logo Style */
         .header { text-align: center; margin-bottom: 30px; }
@@ -86,9 +96,9 @@
 
 <div class="container">
     <div class="header">
-        <!-- Logo file is set to logo.jpg -->
+        <!-- Main Logo atop the page -->
         <img src="logo.png" alt="Farm Logo" class="logo" onerror="this.style.display='none'">
-        <h1> NAFIINVLTD Farm Livestock Market</h1>
+        <h1>NAFIINVLTD  Livestock Market</h1>
         <p>Pick your preferred livestock choice from the grid options below and secure your purchase instantly.</p>
     </div>
 
@@ -121,7 +131,7 @@
                     <input type="text" id="address1" required placeholder="e.g. 12 Broad Street">
                 </div>
                 <div>
-                    <label for="address2">Address Line 2 (Apartment / Suite / Suite Number)</label>
+                    <label for="address2">Address Line 2 (Apartment / Suite Number)</label>
                     <input type="text" id="address2" placeholder="e.g. Flat 4B, Blue Complex (Optional)">
                 </div>
             </div>
@@ -162,48 +172,22 @@
     </form>
 </div>
 
-<!-- Paystack Inline Frame Engine Engine -->
+<!-- Paystack Inline Frame Engine -->
 <script src="https://paystack.co"></script>
 
 <script>
-    // Exact requested tiered price structures
-    const cowPrices =;
-    const chickenPrices =;
-
-    let selectedItemDetails = null;
-
-    // Build the grid views using your exact requested file extensions (.jpg)
-    function generateMarketplaceCards() {
-        const cowsContainer = document.getElementById('cowsGridContainer');
-        const chickensContainer = document.getElementById('chickensGridContainer');
-
-        // Loop through the 6 Cow files (cow1.jpg ... cow6.jpg)
-        for (let i = 1; i <= 6; i++) {
-            let currentPrice = cowPrices[i - 1];
-            cowsContainer.innerHTML += `
-                <div class="card" onclick="selectLivestock('Cow Variant ${i}', ${currentPrice}, this)">
-                    <img src="cow${i}.jpg" alt="Cow ${i}" onerror="this.src='https://placehold.co{i}+(.jpg)'">
-                    <div class="card-info">
-                        <div class="card-title">Healthy Cow Variant #${i}</div>
-                        <div class="card-price">₦${currentPrice.toLocaleString()}</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Loop through the 6 Chicken files (chicken1.jpg ... chicken6.jpg)
-        for (let i = 1; i <= 6; i++) {
-            let currentPrice = chickenPrices[i - 1];
-            chickensContainer.innerHTML += `
-                <div class="card" onclick="selectLivestock('Chicken Variant ${i}', ${currentPrice}, this)">
-                    <img src="chicken${i}.jpg" alt="Chicken ${i}" onerror="this.src='https://placehold.co{i}+(.jpg)'">
-                    <div class="card-info">
-                        <div class="card-title">Premium Chicken Variant #${i}</div>
-                        <div class="card-price">₦${currentPrice.toLocaleString()}</div>
-                    </div>
-                </div>
-            `;
-        }
+    // Loop through the 6 Chicken files (chicken1.jpg ... chicken6.jpg)
+    for (let i = 1; i <= 6; i++) {
+        let currentPrice = chickenPrices[i - 1];
+        chickensContainer.innerHTML += `
+            <div class="card" onclick="selectLivestock('Chicken Variant ${i}', ${currentPrice}, this)"> 
+                <img src="./chicken${i}.jpg" alt="Chicken ${i}" onerror="this.src='https://placehold.co{i}'"> 
+                <div class="card-info"> 
+                    <div class="card-title">Premium Chicken Variant #${i}</div> 
+                    <div class="card-price">₦${currentPrice.toLocaleString()}</div> 
+                </div> 
+            </div>
+        `;
     }
 
     // Process interface selection feedback
@@ -227,7 +211,7 @@
         const email = document.getElementById('email').value;
         const name = document.getElementById('fullName').value;
         const phone = document.getElementById('phone').value;
-        
+
         // Combine address input fields cleanly to attach as payment metadata
         const fullStructuredAddress = `Addr1: ${document.getElementById('address1').value}, Addr2: ${document.getElementById('address2').value || 'N/A'}, City: ${document.getElementById('city').value}, State: ${document.getElementById('state').value}, Landmark: ${document.getElementById('landmark').value}`.trim();
 
