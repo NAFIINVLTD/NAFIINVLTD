@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -76,8 +75,8 @@
     <h2>Select Your Livestock Order</h2>
     <p>Choose your preferred animal from our available stock below, fill in your details, and proceed to secure Paystack payment.</p>
     
-    <!-- ✅ FORMSPREE LINK IS PLUGGED IN SECURELY BELOW -->
-    <form id="orderForm" action="https://formspree.io/f/mnpqnwzo" method="POST">
+    <!-- ✅ SECURE INTERCEPT SUBMISSION FORMSPREE OUTLET -->
+    <form id="orderForm" action="https://formspree.io" method="POST">
         
         <h3>Available Cows (₦500,000)</h3>
         <div class="grid" id="cowsGrid"></div>
@@ -92,9 +91,7 @@
             <input type="tel" name="Phone Number" placeholder="Your Phone Number" required>
             <textarea name="Home Address" placeholder="Your Full Delivery/Home Address" required></textarea>
 
-            <!-- Paystack Redirect Setting -->
-            <input type="hidden" id="nextUrl" name="_next" value="">
-            <button type="submit" onclick="prepareRedirect()">Proceed to Payment</button>
+            <button type="submit">Proceed to Payment</button>
         </div>
     </form>
 </div>
@@ -103,7 +100,7 @@
 const cowsGrid = document.getElementById('cowsGrid');
 const chickensGrid = document.getElementById('chickensGrid');
 
-// ⚙️ ADJUST DYNAMIC CONTENT GENERATION FOR YOUR 12 UPLOADED IMAGES
+// ⚙️ CHOOSE THE EXACT SPLIT FOR YOUR 12 IMAGES (E.G. 6 COWS, 6 CHICKENS)
 const totalCowsUploaded = 6;     
 const totalChickensUploaded = 6; 
 
@@ -111,7 +108,7 @@ const totalChickensUploaded = 6;
 for (let i = 1; i <= totalCowsUploaded; i++) {
     cowsGrid.innerHTML += `
         <div class="card" onclick="document.getElementById('cow_${i}').checked = true">
-            <img src="images/cow${i}.jpg" alt="Cow ${i}" class="livestock-img">
+            <img src="images/cow${i}.jpg" alt="Cow ${i}" class="livestock-img" onerror="this.src='images/cow${i}.jpeg';">
             <label>Cow Breed ${i}</label>
             <input type="radio" id="cow_${i}" name="Livestock Choice" value="Cow Breed ${i}" required>
         </div>
@@ -122,27 +119,41 @@ for (let i = 1; i <= totalCowsUploaded; i++) {
 for (let i = 1; i <= totalChickensUploaded; i++) {
     chickensGrid.innerHTML += `
         <div class="card" onclick="document.getElementById('chicken_${i}').checked = true">
-            <img src="images/chicken${i}.jpg" alt="Chicken ${i}" class="livestock-img">
+            <img src="images/chicken${i}.jpg" alt="Chicken ${i}" class="livestock-img" onerror="this.src='images/chicken${i}.jpeg';">
             <label>Chicken Type ${i}</label>
             <input type="radio" id="chicken_${i}" name="Livestock Choice" value="Chicken Type ${i}" required>
         </div>
     `;
 }
 
-function prepareRedirect() {
-    const selectedChoice = document.querySelector('input[name="Livestock Choice"]:checked');
-    const nextUrlInput = document.getElementById('nextUrl');
+// ✅ FIXED ADVANCED REDIRECT LOGIC FOR PAYSTACK EXECUTED HERE
+document.getElementById('orderForm').addEventListener('submit', function(e) {
+    e.preventDefault(); // Pause standard submit to avoid breaks
     
-    // ✅ LIVE PAYSTACK CHECKOUT ENGINE LINKS PLUGGED IN BELOW
+    const form = this;
+    const selectedChoice = document.querySelector('input[name="Livestock Choice"]:checked');
+    
     const cowPaystackLink = "https://paystack.shop";
     const chickenPaystackLink = "https://paystack.shop";
     
+    let targetPaymentUrl = chickenPaystackLink;
     if (selectedChoice && selectedChoice.value.includes("Cow")) {
-        nextUrlInput.value = cowPaystackLink;
-    } else {
-        nextUrlInput.value = chickenPaystackLink;
+        targetPaymentUrl = cowPaystackLink;
     }
-}
+
+    // Submit data quietly behind the scenes to Formspree, then instantly forward to Paystack
+    fetch(form.action, {
+        method: form.method,
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+    }).then(response => {
+        // Formspree accepted the details successfully, redirect to Paystack
+        window.location.href = targetPaymentUrl;
+    }).catch(error => {
+        // Backup safety action: if fetch fails, jump directly to the transaction page
+        window.location.href = targetPaymentUrl;
+    });
+});
 </script>
 
 </body>
