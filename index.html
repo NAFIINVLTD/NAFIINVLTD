@@ -175,18 +175,20 @@
 
 !-- Place this right after your closing </form> and </div> tags -->
 
-<!-- 1. First, we load the official Paystack engine -->
+<!-- Loads the official Paystack engine -->
 <script src="https://paystack.co"></script>
 
-<!-- 2. Next, we open the script block for your custom logic -->
 <script>
-    // Bulletproof URL calculation setup
+    // Automated absolute URL path calculator
     const pathNameClean = window.location.pathname.replace(/index\.html$/, '');
     const absoluteURL = window.location.origin + (pathNameClean.endsWith('/') ? pathNameClean : pathNameClean + '/');
 
     // Set logos dynamically using absolute base path
     document.getElementById('mainLogo').src = absoluteURL + 'logo.png';
-    document.getElementById('watermarkLayer').style.backgroundImage = "url('" + absoluteURL + "logo.png" + "')";
+    const watermark = document.getElementById('watermarkLayer');
+    if (watermark) {
+        watermark.style.backgroundImage = "url('" + absoluteURL + "logo.png" + "')";
+    }
 
     // Tiered price structures (Cows 500k-800k, Chickens 8k-10k)
     const cowPrices =;
@@ -194,7 +196,7 @@
 
     let selectedItemDetails = null;
 
-    // Automatic fallback bypass loop system to catch wrong image extensions
+    // Automatic fallback loop system to catch wrong image extensions
     function handleImageError(imgElement, type, index, attempt = 0) {
         const fallbacks = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG', '.JPEG', '.jfif'];
         if (attempt < fallbacks.length) {
@@ -205,10 +207,12 @@
         }
     }
 
-    // YOUR PASTED FUNCTION STARTS HERE
+    // Build the grid views layout dynamically
     function generateMarketplaceCards() {
         const cowsContainer = document.getElementById('cowsGridContainer');
         const chickensContainer = document.getElementById('chickensGridContainer');
+        
+        if (!cowsContainer || !chickensContainer) return;
         
         cowsContainer.innerHTML = '';
         chickensContainer.innerHTML = '';
@@ -266,10 +270,11 @@
 
         const fullStructuredAddress = `Addr1: ${document.getElementById('address1').value}, Addr2: ${document.getElementById('address2').value || 'N/A'}, City: ${document.getElementById('city').value}, State: ${document.getElementById('state').value}, Landmark: ${document.getElementById('landmark').value}`.trim();
 
+        // TEMPORARY FAKE TESTING KEY TO BYPASS THE CRASH
         let handler = PaystackPop.setup({
-            key: 'YOUR_PAYSTACK_PUBLIC_KEY', // REPLACE STRING WITH YOUR LIVE PUBLIC KEY FROM PAYSTACK SETTINGS
+            key: 'pk_test_1234567890abcdef1234567890abcdef12345678', 
             email: email,
-            amount: selectedItemDetails.price * 100, // Converts Naira to Kobo
+            amount: selectedItemDetails.price * 100, 
             currency: 'NGN',
             metadata: {
                 custom_fields: [
@@ -296,4 +301,4 @@
 
     // Fire grid initialization layout
     generateMarketplaceCards();
-</script> <!-- 3. Close the script tag at the very end -->
+</script>
