@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAFI INV LTD Livestock Market</title>
+    <title>Fresh Farm Livestock Market</title>
     <style>
         /* Base styles using Arial */
         * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
@@ -19,7 +19,7 @@
         }
         
         /* Fixed Background Floating Watermark */
-        .watermark-bg {
+        #watermarkLayer {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -28,7 +28,6 @@
             height: 60vw;
             max-width: 500px;
             max-height: 500px;
-            background-image: url('logo.png'); /* Reads your uploaded logo.png */
             background-position: center;
             background-repeat: no-repeat;
             background-size: contain;
@@ -97,13 +96,13 @@
 <body>
 
 <!-- Separate background watermark layout container -->
-<div class="watermark-bg"></div>
+<div id="watermarkLayer"></div>
 
 <div class="container">
     <div class="header">
-        <!-- Main Logo atop the page using logo.png -->
-        <img src="logo.png" alt="Farm Logo" class="logo" id="mainLogo">
-        <h1>NAFIINVLTD Farm Livestock Market</h1>
+        <!-- Main Logo atop the page -->
+        <img alt="Farm Logo" class="logo" id="mainLogo">
+        <h1>Fresh Farm Livestock Market</h1>
         <p>Pick your preferred livestock choice from the grid options below and secure your purchase instantly.</p>
     </div>
 
@@ -173,27 +172,10 @@
     </form>
 </div>
 
-<!-- Paystack Inline Frame Engine (Using official updated CDN) -->
+<!-- Paystack Inline Frame Engine -->
 <script src="https://js.paystack.co/v2/inline.js"></script>
 
 <script>
-    // Exact requested tiered price structures (Ranges: Cows 500k-800k, Chickens 8k-10k)
-    const cowPrices =;
-    const chickenPrices =;
-
-    let selectedItemDetails = null;
-
-    // Automatic fallback bypass system to loop extensions if images fail
-    function handleImageError(imgElement, type, index, attempt = 1) {
-        const fallbacks = ['.jpg', '.png', '.jpeg', '.JPG', '.PNG', '.JPEG'];
-        if (attempt < fallbacks.length) {
-            imgElement.src = `./${type}${index}${fallbacks[attempt]}`;
-            imgElement.onerror = function() { handleImageError(imgElement, type, index, attempt + 1); };
-        } else {
-            imgElement.src = `https://placehold.co{type}+Variant+${index}`;
-        }
-    }
-
     // Build the grid views layout dynamically
     function generateMarketplaceCards() {
         const cowsContainer = document.getElementById('cowsGridContainer');
@@ -204,7 +186,7 @@
             let currentPrice = cowPrices[i - 1];
             cowsContainer.innerHTML += `
                 <div class="card" onclick="selectLivestock('Cow Variant ${i}', ${currentPrice}, this)">
-                    <img src="./cow${i}.jpg" alt="Cow ${i}" onerror="handleImageError(this, 'cow', ${i})">
+                    <img src="${absoluteURL}cow${i}.jpg" alt="Cow ${i}" onerror="handleImageError(this, 'cow', ${i})">
                     <div class="card-info">
                         <div class="card-title">Healthy Cow Variant #${i}</div>
                         <div class="card-price">₦${currentPrice.toLocaleString()}</div>
@@ -218,7 +200,7 @@
             let currentPrice = chickenPrices[i - 1];
             chickensContainer.innerHTML += `
                 <div class="card" onclick="selectLivestock('Chicken Variant ${i}', ${currentPrice}, this)">  
-                    <img src="./chicken${i}.jpg" alt="Chicken ${i}" onerror="handleImageError(this, 'chicken', ${i})">  
+                    <img src="${absoluteURL}chicken${i}.jpg" alt="Chicken ${i}" onerror="handleImageError(this, 'chicken', ${i})">  
                     <div class="card-info">  
                         <div class="card-title">Premium Chicken Variant #${i}</div>  
                         <div class="card-price">₦${currentPrice.toLocaleString()}</div>  
@@ -252,7 +234,6 @@
 
         const fullStructuredAddress = `Addr1: ${document.getElementById('address1').value}, Addr2: ${document.getElementById('address2').value || 'N/A'}, City: ${document.getElementById('city').value}, State: ${document.getElementById('state').value}, Landmark: ${document.getElementById('landmark').value}`.trim();
 
-        // Using standard PaystackPop framework
         let handler = PaystackPop.setup({
             key: 'YOUR_PAYSTACK_PUBLIC_KEY', // REPLACE STRING WITH YOUR LIVE PUBLIC KEY FROM PAYSTACK SETTINGS
             email: email,
@@ -283,16 +264,4 @@
 
     // Fire grid initialization layout
     generateMarketplaceCards();
-
-    // Automatic fallback loop loader for top header logo
-    const mainLogoImg = document.getElementById('mainLogo');
-    if (mainLogoImg) {
-        mainLogoImg.onerror = function() {
-            const logoExtensions = ['.png', '.jpg', '.jpeg', '.PNG', '.JPG', '.JPEG'];
-            let currentIdx = logoExtensions.indexOf('.' + mainLogoImg.src.split('.').pop());
-            if(currentIdx < logoExtensions.length - 1 && currentIdx !== -1) {
-                mainLogoImg.src = './logo' + logoExtensions[currentIdx + 1];
-            }
-        };
-    }
 </script>
